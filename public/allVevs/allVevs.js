@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", function() {
         vevs.forEach(function(vev){
             // Create a div element
             const div = document.createElement("div");
-            div.classList.add("futureVevsLi")
+            div.classList.add("pastVevsLi")
             
             // Create three p tags and set their text content
             const p1 = document.createElement("p");
@@ -79,7 +79,7 @@ document.addEventListener("DOMContentLoaded", function() {
             .then(data => {
                 console.log(data)
                 const events = sortEventOnTime(data);
-                populatePastVevs(events.pastEvents);
+                populatePastVevs(events);
         
             })
     }
@@ -98,14 +98,11 @@ document.addEventListener("DOMContentLoaded", function() {
             if (getEventDate(event) < currentDateTime) {     
                 // Event is in the past
                 pastEvents.push(event);
-            } else {
-            // Event is in the future
-            futureEvents.push(event);
-            }
+            } 
+            
         });
         return {
-            pastEvents,
-            futureEvents
+            pastEvents
         };
 
     }
