@@ -18,21 +18,21 @@ app.use(express.static(path.join(__dirname, 'public')));
 function filterItemsByUser(inputUser, jsonArray) {
     return jsonArray.filter(item => item.user === inputUser || item.opponent === inputUser);
 }
-  
+
 function hasDuplicateEvent(eventDataArray, eventData) {
     // Use the Array.prototype.some() method to check if there is any element in the array
     // that matches the given conditions.
     return eventDataArray.some(event => {
         const isDuplicate =
-        (event.user === eventData.user && event.opponent === eventData.opponent) ||
-        (event.user === eventData.opponent && event.opponent === eventData.user);
-        
-      return isDuplicate && event.time === eventData.time;
+            (event.user === eventData.user && event.opponent === eventData.opponent) ||
+            (event.user === eventData.opponent && event.opponent === eventData.user);
+
+        return isDuplicate && event.time === eventData.time;
 
     });
-  }
+}
 
-  
+
 
 
 // Define a route to handle the POST request for booking events
@@ -42,18 +42,18 @@ app.post('/bookVev', (req, res) => {
     // Load existing data from the events.json file (if any)
     let eventDataArray = [];
     try {
-        const data = fs.readFileSync('events.json', 'utf8');
+        const data = fs.readFileSync('data/events.json', 'utf8');
         eventDataArray = JSON.parse(data);
     } catch (err) {
         console.error('Error reapng events.json:', err);
     }
-    
-    if (!hasDuplicateEvent(eventDataArray, eventData)){
+
+    if (!hasDuplicateEvent(eventDataArray, eventData)) {
         // Add the new event data to the array
         eventDataArray.push(eventData);
 
         // Write the updated data back to the events.json file
-        fs.writeFileSync('events.json', JSON.stringify(eventDataArray, null, 4), 'utf8');
+        fs.writeFileSync('data/events.json', JSON.stringify(eventDataArray, null, 4), 'utf8');
 
         // Respond with a JSON object indicating success
         res.status(200).json({ message: 'Event booked successfully' });
@@ -72,7 +72,7 @@ app.post('/updateWinner', (req, res) => {
 
     let eventDataArray = [];
     try {
-        const data = fs.readFileSync('events.json', 'utf8');
+        const data = fs.readFileSync('data/events.json', 'utf8');
         eventDataArray = JSON.parse(data);
     } catch (err) {
         console.error('Error reading events.json:', err);
@@ -91,9 +91,9 @@ app.post('/updateWinner', (req, res) => {
 
     if (found) {
         console.log('Event found and winner updated');
-        
+
         // Save the updated eventDataArray back to the events.json file
-        fs.writeFileSync('events.json', JSON.stringify(eventDataArray, null, 2));
+        fs.writeFileSync('data/events.json', JSON.stringify(eventDataArray, null, 2));
         // Respond with a JSON object indicating success
         res.status(200).json({ message: 'Winner updated successfully' });
     } else {
@@ -115,7 +115,7 @@ app.post('/addUser', (req, res) => {
     // Load existing data from the users.json file (if any)
     let usersDataArray = [];
     try {
-        const data = fs.readFileSync('users.json', 'utf8');
+        const data = fs.readFileSync('data/users.json', 'utf8');
         usersDataArray = JSON.parse(data);
     } catch (err) {
         console.error('Error reading users.json:', err);
@@ -125,7 +125,7 @@ app.post('/addUser', (req, res) => {
     usersDataArray.push(newUser);
 
     // Write the updated data back to the events.json file
-    fs.writeFileSync('users.json', JSON.stringify(usersDataArray, null, 4), 'utf8');
+    fs.writeFileSync('data/users.json', JSON.stringify(usersDataArray, null, 4), 'utf8');
 
     // Respond with a JSON object indicating success
     res.status(200).json({ message: 'User added successfully' });
@@ -136,7 +136,7 @@ app.get('/getAllUsers', (req, res) => {
     let allUsers = []
 
     try {
-        const data = fs.readFileSync('users.json', 'utf8');
+        const data = fs.readFileSync('data/users.json', 'utf8');
         allUsers = JSON.parse(data);
     } catch (err) {
         console.error('Error reading users.json:', err);
@@ -145,7 +145,7 @@ app.get('/getAllUsers', (req, res) => {
     // Respond with a JSON object indicating success or error
     if (allUsers == null) {
         res.status(500).json({ error: "allUsers was null" });
-    } 
+    }
     else if (allUsers) {
         res.status(200).json(allUsers);
     }
@@ -160,14 +160,14 @@ app.get('/getAllVevs', (req, res) => {
     let events = [];
 
     try {
-        const data = fs.readFileSync('events.json', 'utf8');
+        const data = fs.readFileSync('data/events.json', 'utf8');
         eventDataArray = JSON.parse(data);
     } catch (err) {
         console.error('Error reading events.json:', err);
     }
 
     events = eventDataArray.sort((a, b) => new Date(a.time) - new Date(b.time));
-    
+
 
     // Respond with a JSON object indicating success or error
     if (events) {
@@ -185,7 +185,7 @@ app.get('/getVevs', (req, res) => {
     let events = [];
 
     try {
-        const data = fs.readFileSync('events.json', 'utf8');
+        const data = fs.readFileSync('data/events.json', 'utf8');
         eventDataArray = JSON.parse(data);
     } catch (err) {
         console.error('Error reading events.json:', err);
@@ -193,17 +193,17 @@ app.get('/getVevs', (req, res) => {
 
     events = eventDataArray;
 
-    if (user !== "none"){
+    if (user !== "none") {
         events = filterItemsByUser(user, eventDataArray);
     }
 
     events = events.sort((a, b) => new Date(a.time) - new Date(b.time));
-    
+
 
     // Respond with a JSON object indicating success or error
     if (user == null) {
         res.status(500).json({ error: "User was null" });
-    } 
+    }
     else if (events) {
         res.status(200).json(events);
     }

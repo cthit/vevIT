@@ -5,5 +5,4 @@ services:
     ports:
       - 3000:3000
     volumes:
-      - ./events.json:/app/events.json
-      - ./users.json:/app/users.json
+      - ./data:/app/data
